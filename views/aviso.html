@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Confirmação de Venda - OLX</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 16px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        header img {
+            height: 35px;
+            width: auto;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 25px 20px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .main-message {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .main-message h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .main-message p {
+            font-size: 15px;
+            color: #5a5a5a;
+            max-width: 420px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .security-note {
+            background-color: #f8f6ff;
+            border: 1px solid #e5e0ff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .security-note img {
+            width: 34px;
+            height: 30px;
+        }
+
+        .security-note p {
+            font-size: 14px;
+            color: #6f47eb;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .info-section {
+            background-color: #fafbfc;
+            border: 1px solid #ebebeb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-section h2 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 12px;
+            letter-spacing: -0.2px;
+        }
+
+        .info-section p {
+            font-size: 14px;
+            color: #5a5a5a;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .info-section p:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+        }
+
+        .highlight-text {
+            color: #2c2c2c;
+            font-weight: 600;
+        }
+
+        .taxa-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .taxa-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .taxa-label {
+            font-size: 16px;
+            color: #5a5a5a;
+            font-weight: 500;
+        }
+
+        .taxa-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c2c2c;
+            letter-spacing: -0.5px;
+        }
+
+        .cta-button {
+            background-color: #ff8c00;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .cta-button:hover {
+            background-color: #e55a00;
+            transform: translateY(-1px);
+        }
+
+        .cta-button:active {
+            background-color: #cc5200;
+            transform: translateY(0);
+        }
+
+        footer {
+            background-color: #fafbfc;
+            padding: 14px 20px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        footer a {
+            color: #6F47EB;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px 15px;
+            }
+
+            .main-message {
+                margin-bottom: 20px;
+            }
+
+            .main-message h1 {
+                font-size: 22px;
+            }
+
+            .main-message p {
+                font-size: 14px;
+            }
+
+            .security-note {
+                padding: 14px;
+                margin-bottom: 20px;
+            }
+
+            .info-section {
+                padding: 18px;
+                margin-bottom: 20px;
+            }
+
+            .info-section h2 {
+                font-size: 16px;
+            }
+
+            .info-section p {
+                font-size: 13px;
+            }
+
+            .taxa-container {
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 18px;
+            }
+
+            .taxa-label {
+                font-size: 15px;
+            }
+
+            .taxa-value {
+                font-size: 26px;
+            }
+
+            .taxa-section {
+                margin-bottom: 20px;
+            }
+
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 15px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh_GR0a088uCDzmRxt7zFBzxa_aTyJp7zo8w&s" alt="OLX" />
+    </header>
+
+    <div class="container">
+        <div class="main-message">
+            <h1>Confirmação de Taxa de Ativação</h1>
+            <p>Para finalizar sua transação com segurança, é necessário o pagamento de uma taxa de validação que será totalmente reembolsada.</p>
+        </div>
+
+        <div class="security-note">
+            <img src="https://img.icons8.com/color/512/pix.png" alt="Segurança" />
+            <p>Transação protegida pelo sistema de segurança OLX</p>
+        </div>
+
+        <div class="info-section">
+            <h2>Por que preciso pagar esta taxa?</h2>
+            <p>A taxa de ativação é uma medida de segurança para proteger compradores e vendedores de transações fraudulentas.</p>
+            <p>Vendedores sem histórico suficiente precisam validar sua conta através deste procedimento.</p>
+            <p class="highlight-text">O valor será reembolsado integralmente junto com o pagamento da sua venda.</p>
+        </div>
+
+        <div class="taxa-section">
+            <div class="taxa-container">
+                <span class="taxa-label">Taxa de Ativação:</span>
+                <span class="taxa-value" id="taxActivation">{{valorTaxa}}</span>
+            </div>
+            <button class="cta-button" onclick="irParaPagamento()">Prosseguir com o Pagamento</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Ao continuar, você concorda com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a></p>
+    </footer>
+
+<script>
+  function irParaPagamento() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    if (id) {
+      window.location.href = `/qrcode?id=${id}`;
+    } else {
+      alert("ID do usuário não encontrado.");
+    }
+  }
+</script>
+</body>

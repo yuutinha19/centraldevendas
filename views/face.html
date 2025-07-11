@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - Cama casal completa - colchão, baú e cabeceira </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        background-color: #ffecf5;
+        /* Fundo em tom rosa claro */
+        max-width: 100%;
+        margin: 0 auto;
+        position: relative;
+        color: #333;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .header {
+        background-color: #fff;
+        text-align: center;
+        padding: 15px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header img {
+        width: 38px;
+        height: 38px;
+    }
+
+    /* Carrossel de imagens com swipe - OTIMIZADO PARA CELULAR */
+    .slider-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        touch-action: pan-y;
+        margin-top: 10px;
+        /* Margem entre header e foto */
+        background-color: #f5f5f5;
+        /* Fundo para imagens com transparência */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 250px;
+        max-height: 350px;
+        padding: 0;
+        /* Remove padding interno */
+    }
+
+    .slider {
+        display: flex;
+        transition: transform 0.3s ease;
+        width: 100%;
+        height: 100%;
+    }
+
+    .slide {
+        min-width: 100%;
+        position: relative;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0;
+        /* Remove padding interno */
+        margin: 0;
+        /* Remove margens */
+        width: 100%;
+        /* Garante que ocupe toda a largura */
+        overflow: hidden;
+        /* Adicionado para conter o zoom da imagem */
+    }
+
+    .produto-img {
+        width: 120%;
+        /* Aumentado para ocupar mais espaço lateral */
+        height: auto;
+        /* Mantém a proporção */
+        max-height: 350px;
+        /* Ligeiramente aumentado */
+        object-fit: contain;
+        /* Mantém a proporção sem distorção */
+        display: block;
+        margin: 0;
+        /* Remove margens */
+    }
+
+    .slider-dots {
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .slider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+    }
+
+    .slider-dot.active {
+        background-color: #6b2c90;
+        transform: scale(1.2);
+    }
+
+    /* Status de venda */
+    .status-venda {
+        padding: 12px;
+        background-color: #4CAF50;
+        color: white;
+        font-weight: 500;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .status-icon {
+        display: inline-block;
+        margin-right: 8px;
+        font-weight: bold;
+    }
+
+    /* Seção de vendedor melhorada */
+    .vendedor-container {
+        background-color: #fff;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding: 0;
+    }
+
+    .vendedor-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    .vendedor-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 2px solid #fff;
+    }
+
+    .vendedor-dados {
+        flex: 1;
+    }
+
+    .vendedor-nome {
+        font-weight: 600;
+        font-size: 18px;
+        color: #6b2c90;
+        margin-bottom: 3px;
+    }
+
+    .vendedor-local {
+        display: flex;
+        align-items: center;
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .vendedor-local:before {
+        content: "📍";
+        margin-right: 5px;
+        font-size: 12px;
+    }
+
+    .vendedor-desde {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .vendedor-stats {
+        display: flex;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .vendedor-stat {
+        flex: 1;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .stat-numero {
+        display: block;
+        font-weight: 600;
+        font-size: 16px;
+        color: #6b2c90;
+        margin-bottom: 3px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #777;
+    }
+
+    /* Informações do produto */
+    .produto-info {
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 10px;
+    }
+
+    .produto-cabecalho {
+        margin-bottom: 15px;
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #eee;
+    }
+
+    .produto-titulo {
+        font-size: 24px;
+        font-weight: 600;
+        color: #6b2c90;
+        margin-bottom: 8px;
+        line-height: 1.3;
+        letter-spacing: -0.5px;
+    }
+
+    .produto-preco {
+        font-weight: 700;
+        font-size: 26px;
+        color: #6b2c90;
+        background: -webkit-linear-gradient(45deg, #6b2c90, #ff4f9a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    /* Botão para expandir/recolher descrição */
+    .btn-toggle-descricao {
+        display: flex;
+        align-items: center;
+        background-color: #f3f3f3;
+        border: none;
+        width: 100%;
+        padding: 12px 15px;
+        text-align: left;
+        font-size: 15px;
+        color: #555;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-bottom: 15px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-toggle-descricao:hover {
+        background-color: #e9e9e9;
+    }
+
+    .btn-toggle-descricao:after {
+        content: "+";
+        margin-left: auto;
+        font-size: 20px;
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+
+    .btn-toggle-descricao.active:after {
+        content: "-";
+    }
+
+    .produto-descricao-container {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.3s ease;
+    }
+
+    .produto-descricao {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        color: #555;
+        line-height: 1.5;
+        white-space: pre-line;
+        font-size: 15px;
+    }
+
+    .produto-detalhes {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .detalhe {
+        padding: 12px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+
+    .detalhe:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .detalhe-label {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 5px;
+    }
+
+    .detalhe-valor {
+        font-size: 15px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    /* Modal de sucesso */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        display: none;
+    }
+
+    .modal-content {
+        background-color: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 12px;
+        overflow: hidden;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .modal-body {
+        padding: 30px 20px;
+    }
+
+    .success-message {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .modal-body p {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .modal-footer {
+        padding: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        background-color: #6b2c90;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+        background-color: #5a2478;
+    }
+
+    .foto-vendedor {
+        font-size: 11px;
+        color: #999;
+        font-style: italic;
+        margin-bottom: 3px;
+    }
+
+    /* Exibir carrossel apenas se houver mais de 1 imagem */
+    .slider-container-single .slider-dots {
+        display: none;
+    }
+
+    /* Ajuste responsivo para telas muito pequenas */
+    @media (max-width: 320px) {
+        .produto-detalhes {
+            grid-template-columns: 1fr;
+        }
+
+        .produto-titulo {
+            font-size: 20px;
+        }
+
+        .produto-preco {
+            font-size: 22px;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" viewBox="0 0 30 30" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:evenodd;fill:rgb(43.137255%,3.921569%,83.92157%);fill-opacity:1;" d="M 5.683594 19.71875 C 3.972656 19.71875 2.792969 18.304688 2.792969 16.207031 C 2.792969 14.09375 3.972656 12.675781 5.683594 12.675781 C 7.394531 12.675781 8.574219 14.09375 8.574219 16.1875 C 8.574219 18.304688 7.394531 19.71875 5.683594 19.71875 M 5.683594 22.375 C 8.851562 22.375 11.367188 19.738281 11.367188 16.1875 C 11.367188 12.675781 8.988281 10.023438 5.683594 10.023438 C 2.515625 10.023438 0 12.65625 0 16.207031 C 0 19.78125 2.378906 22.375 5.683594 22.375 "/><path style=" stroke:none;fill-rule:evenodd;fill:rgb(54.901963%,89.803922%,38.82353%);fill-opacity:1;" d="M 13.707031 17.664062 L 19.136719 17.664062 C 19.511719 17.664062 19.726562 17.445312 19.726562 17.066406 L 19.726562 15.328125 C 19.726562 14.953125 19.511719 14.730469 19.136719 14.730469 L 15.5 14.730469 L 15.5 7.347656 C 15.5 6.96875 15.28125 6.75 14.90625 6.75 L 13.117188 6.75 C 12.746094 6.75 12.527344 6.96875 12.527344 7.347656 L 12.527344 16.46875 C 12.527344 17.246094 12.941406 17.664062 13.707031 17.664062 "/><path style=" stroke:none;fill-rule:evenodd;fill:rgb(94.901961%,50.196081%,0%);fill-opacity:1;" d="M 21.082031 22.195312 L 24.347656 18.382812 L 27.515625 22.195312 C 27.789062 22.535156 28.144531 22.535156 28.457031 22.253906 L 29.738281 21.117188 C 30.050781 20.835938 30.089844 20.476562 29.796875 20.160156 L 26.277344 16.167969 L 29.480469 12.515625 C 29.757812 12.199219 29.738281 11.859375 29.421875 11.558594 L 28.222656 10.460938 C 27.90625 10.160156 27.554688 10.183594 27.28125 10.519531 L 24.347656 13.972656 L 21.359375 10.519531 C 21.082031 10.203125 20.730469 10.160156 20.414062 10.460938 L 19.175781 11.578125 C 18.859375 11.878906 18.839844 12.199219 19.136719 12.535156 L 22.402344 16.1875 L 18.839844 20.199219 C 18.546875 20.539062 18.585938 20.878906 18.898438 21.15625 L 20.140625 22.253906 C 20.453125 22.535156 20.808594 22.515625 21.082031 22.195312 "/></g></svg>        </div>
+
+        <!-- Slider com swipe -->
+<div class="slider-container" id="slider-container" style="margin-top: 0px;">
+  <div class="slider" id="slider">
+    {{fotos}}
+  </div>
+  <div class="slider-dots" id="slider-dots">
+    <span class="slider-dot active"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+    <span class="slider-dot"></span>
+  </div>
+</div>
+
+<!-- Status de venda logo abaixo das fotos -->
+<div class="status-venda">
+  <span class="status-icon">✓</span> Venda realizada com sucesso!
+</div>
+
+<!-- Informações do vendedor -->
+<div class="vendedor-container">
+  <div class="vendedor-header">
+    <div class="vendedor-avatar"
+      style="background-color: #e9e9e9; display: flex; align-items: center; justify-content: center; color: #999;">
+      {{inicialVendedor}}
+    </div>
+    <div class="vendedor-dados">
+      <div class="vendedor-nome">{{nomeVendedor}}</div>
+      <div class="vendedor-local">{{cidade}}</div>
+      <div class="vendedor-desde">{{desdeQuando}}</div>
+    </div>
+  </div>
+  <div class="vendedor-stats">
+    <div class="vendedor-stat">
+      <span class="stat-numero">0</span>
+      <span class="stat-label">Produtos à venda</span>
+    </div>
+    <div class="vendedor-stat">
+      <span class="stat-numero">0</span>
+      <span class="stat-label">Produtos vendidos</span>
+    </div>
+    <div class="vendedor-stat">
+      <span class="stat-numero">4.8</span>
+      <span class="stat-label">Avaliação</span>
+    </div>
+  </div>
+</div>
+
+<!-- Informações do produto -->
+<div class="produto-info">
+  <div class="produto-cabecalho">
+    <h1 class="produto-titulo">{{nomeProduto}}</h1>
+    <p class="produto-preco">{{preco}}</p>
+  </div>
+
+  <button class="btn-toggle-descricao" id="btn-toggle-descricao">
+    Ver descrição do produto
+  </button>
+
+  <div class="produto-descricao-container" id="produto-descricao-container">
+    <div class="produto-descricao">
+      {{descricao}}
+    </div>
+  </div>
+
+  <div class="produto-detalhes">
+    <div class="detalhe">
+      <div class="detalhe-label">Código</div>
+      <div class="detalhe-valor">{{id}}</div>
+    </div>
+
+    <div class="detalhe">
+      <div class="detalhe-label">Comprador</div>
+      <div class="detalhe-valor">{{nomeCompradora}}</div>
+    </div>
+
+    <div class="detalhe">
+      <div class="detalhe-label">Plataforma</div>
+      <div class="detalhe-valor">olx</div>
+    </div>
+  </div>
+</div>
+    <!-- Modal de sucesso -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Venda realizada com sucesso!</h2>
+            </div>
+            <div class="modal-body">
+                <p class="success-message">Parabéns!</p>
+                <p>Sua venda foi concluída e registrada com sucesso.</p>
+            </div>
+            <div class="modal-footer">
+  <a href="/form?id={{id}}" class="btn">Continuar</a>
+</div>
+        </div>
+    </div>
+
+    <script>
+    // Configuração do slider com swipe
+    const slider = document.getElementById('slider');
+    const dots = document.querySelectorAll('.slider-dot');
+    let currentSlide = 0;
+    const totalSlides = document.querySelectorAll('.slide').length;
+
+    // Variáveis para o swipe
+    let startX, moveX, initialX;
+    let isDragging = false;
+
+    // Função para ajustar a altura do slider após o carregamento da imagem
+    function adjustSliderHeight() {
+        const slides = document.querySelectorAll('.slide');
+        if (slides.length > 0) {
+            const sliderContainer = document.getElementById('slider-container');
+
+            // Inicializa com altura mínima para evitar colapso durante o carregamento
+            sliderContainer.style.minHeight = '200px';
+        }
+    }
+
+    // Chamar ajuste inicial
+    adjustSliderHeight();
+
+    // Funções para o controle do swipe
+    function setSlidePosition() {
+        if (slider && totalSlides > 0) {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // Atualiza os dots
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    function nextSlide() {
+        if (totalSlides > 1) {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            setSlidePosition();
+        }
+    }
+
+    function prevSlide() {
+        if (totalSlides > 1) {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            setSlidePosition();
+        }
+    }
+
+    // Só configurar os eventos touch se houver mais de 1 slide
+    if (totalSlides > 1 && slider) {
+        // Eventos para touch (mobile)
+        slider.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            initialX = slider.getBoundingClientRect().left;
+            isDragging = true;
+        });
+
+        slider.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            moveX = e.touches[0].clientX;
+            const diff = moveX - startX;
+
+            // Evita// Evita que a página seja arrastada
+            e.preventDefault();
+
+            // Movimento mais suave durante o arrasto
+            slider.style.transform = `translateX(${diff - (currentSlide * 100)}%)`;
+        });
+
+        slider.addEventListener('touchend', (e) => {
+            isDragging = false;
+
+            if (!moveX) return; // Se não houve movimento, sai da função
+
+            const diffX = moveX - startX;
+
+            if (Math.abs(diffX) > 50) { // Reduzido para 50px para facilitar o swipe
+                if (diffX > 0) {
+                    prevSlide();
+                } else {
+                    nextSlide();
+                }
+            } else {
+                // Se o movimento foi pequeno, volta para a posição original
+                setSlidePosition();
+            }
+
+            // Reset das variáveis
+            moveX = null;
+            startX = null;
+        });
+
+        // Eventos para clique nos dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                setSlidePosition();
+            });
+        });
+
+        // Adiciona eventos para teclado (acessibilidade)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+    }
+
+    // Funcionalidade para expandir/recolher a descrição
+    const btnToggleDescricao = document.getElementById('btn-toggle-descricao');
+    const descricaoContainer = document.getElementById('produto-descricao-container');
+
+    if (btnToggleDescricao && descricaoContainer) {
+        const descricao = descricaoContainer.querySelector('.produto-descricao');
+
+        btnToggleDescricao.addEventListener('click', () => {
+            if (descricaoContainer.style.height === '0px' || !descricaoContainer.style.height) {
+                descricaoContainer.style.height = descricao.offsetHeight + 'px';
+                btnToggleDescricao.classList.add('active');
+                btnToggleDescricao.textContent = 'Ocultar descrição';
+            } else {
+                descricaoContainer.style.height = '0px';
+                btnToggleDescricao.classList.remove('active');
+                btnToggleDescricao.textContent = 'Ver descrição do produto';
+            }
+        });
+
+        // Inicializa a descrição como oculta
+        descricaoContainer.style.height = '0px';
+    }
+
+    // Inicializa o slider
+    if (totalSlides > 0) {
+        setSlidePosition();
+    }
+
+    // Gestão de erros para carregamento de imagens
+    const produtoImgs = document.querySelectorAll('.produto-img');
+    produtoImgs.forEach(img => {
+        img.addEventListener('error', function() {
+            // Substituir por imagem padrão em caso de erro
+            this.src = 'placeholder.jpg';
+            this.alt = 'Imagem não disponível';
+        });
+    });
+
+    // Mostrar o modal após 5 segundos
+    setTimeout(function() {
+        document.getElementById('successModal').style.display = 'flex';
+    }, 5000);
+
+    // Fechar modal ao clicar fora dele (opcional)
+    document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+    </script>
+</body>
