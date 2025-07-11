@@ -22,14 +22,18 @@ const URL_BASE = "https://olx-bot-lingering-violet-6133.fly.dev";
 const app = express();
 const upload = multer();
 const PORT = 3000;
+const dataDir = '/data';
 
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 // Simula __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Banco de dados com LowDB
-const file = path.join("/data", "db.json");
-const adapter = new JSONFile(file);
+const dbPath = path.join(dataDir, 'db.json');
+const adapter = new JSONFile(dbPath);
 const db = new Low(adapter);
 
 await db.read();
